@@ -1,5 +1,6 @@
 from enum import Enum
 
+import os
 import sqlite3
 import sqlite_service
 
@@ -19,10 +20,10 @@ class AppDb():
         self.cursor = None
         self.connected = False
         self.status = DB_STATUS.OK
-        self.openconn()
+        self.open_connection()
 
-    def db_name(self):
-        return self.dbname
+    def get_db_name(self):
+        return self.db_name
 
     def is_connected(self):
         return self.connected
@@ -36,8 +37,8 @@ class AppDb():
 
     def open_connection(self):
         if not self.is_connected():
-            if os.path.exists(dbname):
-                self.connection = sqlite3.connect(dbname)
+            if os.path.exists(self.db_name):
+                self.connection = sqlite3.connect(self.db_name)
                 self.cursor = self.connection.cursor()
                 self.connected = True
             else:
@@ -45,7 +46,7 @@ class AppDb():
         return self.connected
 
     def close_connection(self):
-        if self.is_connected()
+        if self.is_connected():
             error_msg = None
             try:
                 self.connection.close()
@@ -118,12 +119,13 @@ class AppDb():
             return {'r': status}
 
     def select_person(self, key, value):
+        key = key.strip() # REMOVER DEPOIS
         status = self.check_status()
-        if :
+        if status:
             params = (value,)
             try:
-                c = self.connection.sqlexec(
-                    'Select * from person where {}=?'.format(key), value)
+                c = self.cursor.execute(
+                    'Select * from person where {}=?'.format(key), value) #SQL INJECTION
             except sqlite3.Error as e:
                 return {'r': DB_STATUS.SQL_ERROR, 'e': e.args[0]}
             else:
@@ -134,11 +136,12 @@ class AppDb():
             return {'r': status}
 
     def exist_person(self, key, value):
+        key = key.strip() # REMOVER DEPOIS
         if self.connection.connected == 1:
-            params = (cpf,)
+            params = (value,)
             try:
-                c = self.connection.sqlexec(
-                    'Select * from person where {}=?'.format(key), value)
+                c = self.cursor.execute(
+                    'Select * from person where {}=?'.format(key), value) #SQL INJECTION
             except sqlite3.Error as e:
                 return {'r': DB_STATUS.SQL_ERROR, 'e': e.args[0]}
             else:
