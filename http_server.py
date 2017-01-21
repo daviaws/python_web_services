@@ -5,15 +5,15 @@ from aiohttp import web
 import aiohttp
 import json
 
-RESOURCE_NAME = 'resource'
-
 class HttpServer(object):
 
-    def __init__(self, ip="10.100.11.12", port=80):
+    def __init__(self, controller, ip="10.100.11.12", port=80):
+        self.controller = controller
         self.app = None
         self.ip = ip
         self.port = port
         self.loop = asyncio.get_event_loop()
+
     def set_sslcontext(self, sslcontext):
         self.sslcontext = sslcontext
 
@@ -33,15 +33,15 @@ class HttpServer(object):
     def map_http_routes(self):
         self.app.router.add_route('GET', '/', self.go_to_index)
         
-        # self.app.router.add_route(
-        #     'GET',
-        #     '/person',
-        #     self.server_available)
+        self.app.router.add_route(
+            'GET',
+            '/db/{resource}',
+            self.handle_consult)
 
         self.app.router.add_route(
-            '*',
-            '/{resource}/{id}',
-            self.handle_resource, name='resource_handler')
+            'GET',
+            '/db/{resource}/{id}',
+            self.handle_consult)
 
         self.app.router.add_route(
             'GET',
@@ -51,28 +51,15 @@ class HttpServer(object):
         response = web.StreamResponse()
         self.app.router.add_static(prefix='/', path='web/')
 
-    def handle_values(self, items):
-        representation = {}
-        for item in items:
-            print(item)
-            if item[0] != RESOURCE_NAME:
-                representation[item[0]] = item[1]
-        return representation
-
     @asyncio.coroutine
-    def handle_resource(self, request):
-        resource = request.match_info.get('resource', "Anonymous")
-        method = request.method
-        representation = self.handle_values(request.match_info.items())
-        response = json.dumps(representation)
-        return web.Response(text=response)
-
-    @asyncio.coroutine
-    def handle_with_query(self, request):
-        resource = request.match_info.get('resource', "Anonymous")
-        method = request.method
-        representation = self.handle_values(request.match_info.items())
-        response = json.dumps(representation)
+    def handle_consult(self, request):
+        resource = request.match_info.get('resource', None)
+        r_id = request.match_info.get('id', None)
+        if r_id is None:
+            res = self.controller.get_all(resource)
+        else:
+            res = self.controller.get(resource, r_id)
+        response = json.dumps(res)
         return web.Response(text=response)
 
     @asyncio.coroutine
