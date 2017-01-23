@@ -34,14 +34,14 @@ class HttpServer(object):
         self.app.router.add_route('GET', '/', self.go_to_index)
         
         self.app.router.add_route(
-            'GET',
+            '*',
             '/db/{resource}',
-            self.handle_consult)
+            self.handle_resource)
 
         self.app.router.add_route(
-            'GET',
+            '*',
             '/db/{resource}/{id}',
-            self.handle_consult)
+            self.handle_resource)
 
         self.app.router.add_route(
             'GET',
@@ -52,15 +52,39 @@ class HttpServer(object):
         self.app.router.add_static(prefix='/', path='web/')
 
     @asyncio.coroutine
-    def handle_consult(self, request):
+    def handle_resource(self, request):
+        method = request.method
+        res = ''
+        if method == 'GET':
+            res = self.handle_select(request)
+        elif method == 'DELETE':
+            res = self.handle_delete(request)
+        elif method == 'PUT':
+            res = yield from self.handle_insert(request)
+        response = json.dumps(res)
+        return web.Response(text=response)
+
+    def handle_select(self, request):
         resource = request.match_info.get('resource', None)
         r_id = request.match_info.get('id', None)
         if r_id is None:
-            res = self.controller.get_all(resource)
+            return self.controller.get_all(resource)
         else:
-            res = self.controller.get(resource, r_id)
-        response = json.dumps(res)
-        return web.Response(text=response)
+            return self.controller.get(resource, r_id)
+
+    def handle_delete(self, request):
+        resource = request.match_info.get('resource', None)
+        r_id = request.match_info.get('id', None)
+        if r_id is None:
+            return self.controller.delete_all(resource)
+        else:
+            return self.controller.delete(resource, r_id)
+
+    @asyncio.coroutine
+    def handle_insert(self, request):
+        resource = request.match_info.get('resource', None)
+        representation = yield from request.json()
+        return  self.controller.insert(resource, representation)
 
     @asyncio.coroutine
     def go_to_index(self, request):

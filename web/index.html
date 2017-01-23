@@ -1,15 +1,70 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="app">
     <head>
-        <meta http-equiv="Cache-control" content="max-age=3600">
-        <meta charset="utf-8"> </meta>
-        <title>Brincando</title>
+        <meta charset="utf-8"></meta>
+        <title>DB App</title>
+        <script src="js/angular.min.js"></script>
+        <script src="js/jquery-3.1.1.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        <script src="js/index.js"></script>
+        <link rel="stylesheet" href="css/bootstrap.min.css">
     </head>
 
-    <body>
-        <p>
-            Mamãe
-        </p>
+    <body ng-controller="index">
+        <div id="content">
+            <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">  
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <a class="navbar-brand" ng-click="changeSelector('brand')" href="#">DB App</a>
+                    </div>
+                    <ul class="nav navbar-nav">
+                        <li><a id="select" class="btn" ng-class="select_state" ng-click="changeSelector('select')">Select</a></li>
+                        <li><a id="insert" class="btn" ng-class="insert_state" ng-click="changeSelector('insert')">Insert</a></li>
+                        <li><a id="delete" class="btn" ng-class="delete_state" ng-click="changeSelector('delete')">Delete</a></li>
+                    </ul>
+                </div>
+            </div>
+            <form id="requestscreen" style="padding-top: 50px;" ng-submit="requestSender()" ng-if="state!=0">
+                <div>
+                    <table border="1">
+                        <tr>
+                            <td>
+                                CPF:
+                            </td>
+                            <td ng-if="state==2">
+                                Name:
+                            </td>
+                            <td ng-if="state==2">
+                                Age:
+                            </td>
+                            <td ng-if="state==2">
+                                Height:
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input id="textField" type="text" name="cpf" size="12" ng-model="request.cpf" required/>
+                            </td>
+                            <td ng-if="state==2">
+                                <input id="textField1" type="text" name="name" minlength="3" maxlength="25" size="12" 
+                                       ng-model="request.name" required/>
+                            </td>
+                            <td ng-if="state==2">
+                                <input id="textField2" type="number" name="age" minlength="3" maxlength="3" size="12" 
+                                       ng-model="request.age" required/>
+                            </td>
+                            <td ng-if="state==2">
+                                <input id="textField3" type="text" name="height" minlength="4" maxlength="4" size="12" 
+                                       ng-model="request.height" required/>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div id="applybutton">
+                    <button type="submit" ng-click="do_request()">Request</button>
+                </div>
+            </form>
+        </div>
     </body>
 
 </html>
