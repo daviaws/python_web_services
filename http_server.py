@@ -7,7 +7,7 @@ import json
 
 class HttpServer(object):
 
-    def __init__(self, controller, ip="10.100.11.12", port=80):
+    def __init__(self, controller, ip="127.0.0.1", port=80):
         self.controller = controller
         self.app = None
         self.ip = ip
@@ -61,8 +61,7 @@ class HttpServer(object):
             res = self.handle_delete(request)
         elif method == 'PUT':
             res = yield from self.handle_insert(request)
-        response = json.dumps(res)
-        return web.Response(text=response)
+        return web.json_response(res)
 
     def handle_select(self, request):
         resource = request.match_info.get('resource', None)

@@ -165,7 +165,7 @@ class AppDb():
         else:
             return {'r': status, 'd': None}
 
-    def delete_person(self, cpf):
+    def delete_person(self, cpf=None):
         status = self.check_status()
         if status:
             params = (cpf,)

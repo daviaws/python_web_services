@@ -20,7 +20,7 @@ class Controller():
             response = resource.insert(representation)
             return response
         else:
-            return CONTROLLER_RESULT.INVALID_RESOURCE.value()
+            return CONTROLLER_RESULT.INVALID_RESOURCE.value
 
     def get(self, name, r_id):
         if name in self.resources:
@@ -28,7 +28,7 @@ class Controller():
             response = resource.get(r_id)
             return response
         else:
-            return CONTROLLER_RESULT.INVALID_RESOURCE.value()
+            return CONTROLLER_RESULT.INVALID_RESOURCE.value
 
     def get_all(self, name):
         if name in self.resources:
@@ -36,22 +36,22 @@ class Controller():
             response = resource.get_all()
             return response
         else:
-            return CONTROLLER_RESULT.INVALID_RESOURCE.value()
+            return CONTROLLER_RESULT.INVALID_RESOURCE.value
 
     def delete(self, name, r_id):
         if name in self.resources:
             resource = self.resources[name]
             return resource.delete(r_id)
         else:
-            return CONTROLLER_RESULT.INVALID_RESOURCE.value()
+            return CONTROLLER_RESULT.INVALID_RESOURCE.value
 
     def delete_all(self, name):
         if name in self.resources:
             resource = self.resources[name]
             resource.delete_all()
-            return CONTROLLER_RESULT.SUCCESS.value()
+            return CONTROLLER_RESULT.SUCCESS.value
         else:
-            return CONTROLLER_RESULT.INVALID_RESOURCE.value()
+            return CONTROLLER_RESULT.INVALID_RESOURCE.value
 
 class PersonHandler():
 
@@ -69,10 +69,10 @@ class PersonHandler():
             print(e)
             return {'cpf' : None}
 
-        if self.db.exist_person('cpf', cpf):
-            self.db.insert_person(cpf, name, age, height)
-        else:
+        if self.db.exist_person('cpf', cpf)['d']:
             self.db.update_person(cpf, name, age, height)
+        else:
+            self.db.insert_person(cpf, name, age, height)
         self.db.commit()
         return {'cpf' : cpf}
 
@@ -84,7 +84,9 @@ class PersonHandler():
 
     def delete(self, cpf):
         self.db.delete_person(cpf)
+        self.db.commit()
         return {'cpf' : cpf}
 
     def delete_all(self):
         self.db.delete_person()
+        self.db.commit()

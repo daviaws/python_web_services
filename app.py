@@ -23,14 +23,12 @@ def create_loop():
 
     loop = asyncio.get_event_loop()
     if signal is not None:
-        loop.add_signal_handler(signal.SIGINT, loop.stop)
+        loop.add_signal_handler(signal.SIGINT, loop.stop)  
 
-    create_http_server()
-    http_server.run()
-
-def create_http_server():
+def create_http_server(ip):
     global http_server
-    http_server = HttpServer(controller)
+    http_server = HttpServer(controller, ip=ip)
+    http_server.run()
 
 def run_service():
     global loop
@@ -42,6 +40,9 @@ if __name__ == "__main__":
     global controller
     global http_server
 
+    IP = '10.100.11.12'
+
     create_controller()
     create_loop()
+    create_http_server(IP)
     run_service()

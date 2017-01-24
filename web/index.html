@@ -15,12 +15,12 @@
             <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">  
                 <div class="container-fluid">
                     <div class="navbar-header">
-                        <a class="navbar-brand" ng-click="changeSelector('brand')" href="#">DB App</a>
+                        <a class="navbar-brand" ng-click="change_selector('brand')">DB App</a>
                     </div>
                     <ul class="nav navbar-nav">
-                        <li><a id="select" class="btn" ng-class="select_state" ng-click="changeSelector('select')">Select</a></li>
-                        <li><a id="insert" class="btn" ng-class="insert_state" ng-click="changeSelector('insert')">Insert</a></li>
-                        <li><a id="delete" class="btn" ng-class="delete_state" ng-click="changeSelector('delete')">Delete</a></li>
+                        <li><a id="select" class="btn" ng-class="select_state" ng-click="change_selector('select')">Select</a></li>
+                        <li><a id="insert" class="btn" ng-class="insert_state" ng-click="change_selector('insert')">Insert</a></li>
+                        <li><a id="delete" class="btn" ng-class="delete_state" ng-click="change_selector('delete')">Delete</a></li>
                     </ul>
                 </div>
             </div>
@@ -43,18 +43,18 @@
                         </tr>
                         <tr>
                             <td>
-                                <input id="textField" type="text" name="cpf" size="12" ng-model="request.cpf" required/>
+                                <input id="textField" type="text" pattern="[0-9]*|\*" name="cpf" minlength="1" maxlength="11" size="11" ng-model="request.cpf" required/>
                             </td>
                             <td ng-if="state==2">
                                 <input id="textField1" type="text" name="name" minlength="3" maxlength="25" size="12" 
                                        ng-model="request.name" required/>
                             </td>
                             <td ng-if="state==2">
-                                <input id="textField2" type="number" name="age" minlength="3" maxlength="3" size="12" 
+                                <input id="textField2" type="number" name="age" minlength="2" maxlength="3" size="12" 
                                        ng-model="request.age" required/>
                             </td>
                             <td ng-if="state==2">
-                                <input id="textField3" type="text" name="height" minlength="4" maxlength="4" size="12" 
+                                <input id="textField3" type="number" step="0.01" name="height" size="12" 
                                        ng-model="request.height" required/>
                             </td>
                         </tr>
@@ -64,6 +64,38 @@
                     <button type="submit" ng-click="do_request()">Request</button>
                 </div>
             </form>
+            <div ng-show="!response_is_empty">
+                <table border="1" width=80% height=20%>
+                        <tr>
+                            <td>
+                                CPF:
+                            </td>
+                            <td>
+                                Name:
+                            </td>
+                            <td>
+                                Age:
+                            </td>
+                            <td>
+                                Height:
+                            </td>
+                        </tr>
+                        <tr ng-repeat=" (cpf, person) in response">
+                            <td>
+                                {{cpf}}
+                            </td>
+                            <td>
+                                {{person.name}}
+                            </td>
+                            <td>
+                                {{person.age}}
+                            </td>
+                            <td>
+                                {{person.height}}
+                            </td>
+                        </tr>
+                    </table>
+            </div>
         </div>
     </body>
 
